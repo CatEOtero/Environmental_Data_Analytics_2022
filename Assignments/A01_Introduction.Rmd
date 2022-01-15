@@ -1,6 +1,6 @@
 ---
 title: "Assignment 1: Introduction"
-author: "Student Name"
+author: "Catherine Otero"
 output: pdf_document
 geometry: margin=2.54cm
 ---
@@ -16,27 +16,27 @@ This exercise accompanies the introductory material in Environmental Data Analyt
 6. When you have completed the assignment, **Knit** the text and code into a single PDF file.
 8. After Knitting, submit the completed exercise (PDF file) to the dropbox in Sakai. Add your last name into the file name (e.g., "Lima_A01_Introduction.Rmd") prior to submission.
 
-The completed exercise is due on <>.
+The completed exercise is due on <Jan 18, 2022>.
 
 ## 1) Discussion Questions
 
 1. What are your previous experiences with data analytics, R, and Git? Include both formal and informal training.
 
-> Answer: 
+> Answer: I taught myself R basics during undergrad. I analyzed data in R for 3 years in undergrad and have continued using R in my graduate studies. Most of my training has been informal; lots of googling, office hours, and library help sessions. The hydrology course at the Nich school included some formal R training. I have also done data analysis in Excel and Stata in my statisitcs courses. I have no previous experience with Git.
 
 2. Are there any components of the course about which you feel confident?
 
-> Answer: 
+> Answer: I feel confident about the R basics and understanding the general logic of R. I am also confident about the logic behind the data analysis.
 
 3. Are there any components of the course about which you feel apprehensive?
 
-> Answer: 
+> Answer: I am apprehensive about maintaining my Github and making sure I am pushing, pulling, and committing at the correct times. I don't want to lose work because I forget to do a step in Git.
 
 
 ## 2) GitHub
 
 Provide a link below to your forked course repository in GitHub. Make sure you have pulled all recent changes from the course repository  and that you have updated your course README file. 
 
-> Answer: 
+> Answer: https://github.com/CatEOtero/Environmental_Data_Analytics_2022.git
 
 
