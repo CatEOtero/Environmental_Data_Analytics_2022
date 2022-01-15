@@ -105,7 +105,7 @@ A quick note: in many situations, a `=` sign will substitute for a `<-`. Resist 
 ```{r}
 x <- 3*4
 ```
-Now, call up the object `x`. Notice that `x` has also just shown up in your Environment tab. 
+Notice that `x` has also just shown up in your Environment tab. Now, call up the object `x` by running x by itself. Then its value will show up in the console.
 ```{r}
 x
 ```
@@ -117,9 +117,10 @@ Informative names are the first illustration of a common data management recomme
 
 Importantly, you may never call an R object "data". This word is reserved for a specific function and may not be assigned as a name. To work around this, many people call their R objects "dat", which is another example of a less-than-ideal data management practice because it is not informative. 
 
-Run the first line of code below. Then, type in "long" and press `tab`. What happens?
+Run the first line of code below (the assign long_name_for_illustration assignment below. Then, type in "long" and press `tab`. What happens? R fills in with tab-completion!
 
-What happens if there is a typo in your code?
+What happens if there is a typo in your code? 
+This is just showing that R is case sensitive.
 Type the following in the R window: 
 Long_name_for_illustration
 longnameforillustration
@@ -141,11 +142,13 @@ Within your R code, it is often useful to include notes about your workflow. So 
 R functions are the major tool used in R. Functions can do virtually unlimited things within the R universe, but each function requires specific inputs that are provided under specific syntax. We will start with a simple function that is built into R, `seq`
 
 ```{r}
+#seq aka sequence outputs a sequence of numbers. You specify start and end numbers. 
 seq(1, 10)
 ten_sequence <- seq(1, 10)
 ten_sequence
 
 seq(1, 10, 2) # from, to, by
+#outputs 1 3 5 7 9. By has a default value of 1 and doesn't have to be specified
 ```
 
 The basic form of a function is `functionname()`, and the packages we will use in this class will use these basic forms. However, there may be situations when you will want to create your own function. Below is a description of how to write functions through the metaphor of creating a recipe (credit: @IsabellaGhement on Twitter). 
@@ -164,28 +167,45 @@ recipe1 <- function(x){
   mix <- x*2
   return(mix)
 }
+#so this is naming the function recipe1 which you will use to run the function later. In the parentheses, x is the numbers you inout i.e. 5. In the curly brackets, you assign a name to what you want the function to do to x i.e. 5*2. and you tell R what to return as the output which should be what you name the function action in the curly brackets. The ouput will be 10.
 
-# Bake the recipe
+
+# Bake the recipe. Assign the function to a different object with a specific input into the function.
 simplemeal <- recipe1(5)
 
-# Serve the recipe
+# Serve the recipe. Run the code and you get 10!
 simplemeal
+
+#Yes it would be easier to just do simplemeal <- 5*2 BUT having the function saves you typing and one line of code for many computations. When working with more complex data the value of creating your own functions becomes clearer. 
 ```
 
 Two single ingredient recipes, baked at the same time: 
+Cat Note: you do two things with one ingredient i.e. x
 ```{r}
 recipe2 <- function(x){
   mix1 <- x*2
   mix2 <- x/2
   return(list(mix1 = mix1, #comma indicates we continue onto the next line
               mix2 = mix2))
-}
+  }
+
+#A list is a vector with more than one object. The list from code above will have two objects. Have mix1 = mix1 so that objects in the list are called the same as the objects in the function, but could name them anything.
 
 doublesimplemeal <- recipe2(6)
 doublesimplemeal
+
+#output is $mix1 [1] 12 $mix2 [1] 3
+#the $ sign let's you look for objects in the list or just call part of the list
+#If don't know the name of the object in the list just type the function name with $ after and R will show you options for your list.
+
+doublesimplemeal$mix1
+#output [1] 12
+
+#the [1] is just showing that it's in the 1 spot in the vector
 ```
 
 Two double ingredient recipes, baked at the same time: 
+Cat Note: adding ingredients! So you need to provide two inputs in this example.
 ```{r}
 recipe3 <- function(x, f){
   mix1 <- x*f
@@ -201,6 +221,8 @@ doublecomplexmeal$mix1
 
 Make a recipe based on the ingredients you have
 ```{r}
+#For this example it's like IF you have less than 3 carrots (input less than 3) you eat carrot sticks or ELSE you have 3 or more carrots (input 3 or greater) you can make soup. You do one or the other actions. 
+
 recipe4 <- function(x) {
   if(x < 3) {
     x*2
@@ -209,6 +231,8 @@ recipe4 <- function(x) {
     x/2
   }
 }
+
+#Just put x if you want it to be equal to x
 
 recipe5 <- function(x) {
   if(x < 3) {
@@ -225,8 +249,11 @@ meal <- recipe4(4); meal
 meal2 <- recipe4(2); meal2
 meal3 <- recipe5(3); meal3
 
+#the above code assigns name meal to recipe4 when 4 is the input and the semicolon followed by the assigned name will then return the output without you having to run meal as a new line of code to get the output after assignment
+
+#below code has same output of recipe4 but simplified. It uses a function within a function #funcception. The things within the parentheses within the curly brackets are called elements.
 recipe6 <- function(x){
-  ifelse(x<3, x*2, x/2) #log_exp, if TRUE, if FALSE
+  ifelse(x<3, x*2, x/2) #logical_expression, if TRUE (if the input is less than 3), if FALSE (if the input is not less than 3)
   
 }
 
@@ -252,11 +279,11 @@ For now, here are some ways to access the help tools in R:
 
 ## Tips and Tricks
 
-* Spaces (generally) don't matter. One notable exception is that spaces within quotation marks *do* matter.
+* Spaces (generally) don't matter. One notable exception is that spaces within quotation marks *do* matter. Because quotations mean you are adding text to an output
 
 * Case matters
 
-* Parentheses and quotation marks appear in pairs when typed into RStudio. 
+* Parentheses and quotation marks appear in pairs when typed into RStudio.
 
 * When typing long names, use the `tab` key partway through the name to generate  autocomplete options. 
 
@@ -264,8 +291,8 @@ For now, here are some ways to access the help tools in R:
 
 R Markdown and R script files can be organized into sections. Sections can be expanded or collapsed as desired via three options: 
 
-* On the lefthand side of the editor, you will see arrows to the right of the line numbers. Clicking on these arrows will collapse or expand the section. When a section is collapsed, a double-arrow box will appear within the script. You can also click on this box directly to expand the section.
+* On the left hand side of the editor, you will see arrows to the right of the line numbers. Clicking on these arrows will collapse or expand the section. When a section is collapsed, a double-arrow box will appear within the script. You can also click on this box directly to expand the section. This cleans up your code so that a long doc is cleaner but the commands don't go away just are hidden
 
-* Navigating from the menu bar, the Edit menu will bring you to the option "Folding". This option can be especially helpful when you first open a file and decide if you want to navigate between sections or run sections sequentially.
+* Navigating from the menu bar, the Edit menu will bring you to the option "Folding". Gives you the option to collapse all and then you get a kind of table of contents for your markdown file with the titles you gave things the (words next to the # that are outside of code blocks). This option can be especially helpful when you first open a file and decide if you want to navigate between sections or run sections sequentially.
 
 * Highlight a section of text, and then press `option` + `command` + `L` (Mac) or `alt` + `L` (Windows). Add the `shift` key to this combination to expand, or click the box.
