@@ -1,6 +1,6 @@
 ---
 title: "Assignment 2: Coding Basics"
-author: "Student Name"
+author: "Catherine Otero"
 output: pdf_document
 geometry: margin=2.54cm
 editor_options: 
@@ -31,11 +31,17 @@ This exercise accompanies the lessons in Environmental Data Analytics on coding 
 4. Insert comments in your code to describe what you are doing.
 
 ```{r}
-#1. 
+#1.Generate a sequence of numbers from one to 100, increasing by fours. Name the output quad_interval
+quad_interval <- seq(1, 100, 4)
+quad_interval
 
-#2. 
+#2. Calculate the mean and median of quad_interval
+mean(quad_interval)
+median(quad_interval)
 
-#3. 
+#3. Is mean of quad_interval greater than median of quad_interval? Answer=FALSE
+mean(quad_interval) > median(quad_interval)
+
 
 ```
 
@@ -45,17 +51,40 @@ This exercise accompanies the lessons in Environmental Data Analytics on coding 
 
 6. Label each vector with a comment on what type of vector it is.
 
-7. Combine each of the vectors into a data frame. Assign the data frame an informative name.
+7. Combine each of the vectors into a data frame. Assign the data frame an informative name. Helpful link
+https://www.geeksforgeeks.org/creating-a-data-frame-from-vectors-in-r-programming/
 
 8. Label the columns of your data frame with informative titles.
 
 ```{r}
+#5. Vector creation. Helpful link https://techvidvan.com/tutorials/r-vector/
 
+#character vector
+student_names <- c("Maria", "Cat", "Carlos", "Quincy")
+
+#numeric vector
+test_scores <- c(100, 95, 93, 90)
+
+#logical vector
+passing_score <- c(TRUE, TRUE, TRUE, TRUE)
+
+#7. Create data frame from vectors
+exam_results.df<- data.frame(student_names, test_scores, 
+                      passing_score)
+exam_results.df
+
+#8. renaming columns in data frame. Helpful link https://www.geeksforgeeks.org/change-column-name-of-a-given-dataframe-in-r/
+exam_results.df <-data.frame(student_names, test_scores, 
+                      passing_score)
+
+colnames(exam_results.df) <- c('Student Names','Test Scores','Passing Score?')
+
+exam_results.df
 ```
 
 9. QUESTION: How is this data frame different from a matrix?
 
-> Answer: 
+> Answer: This dataframe contains different types of data (i.e. numeric and character data) while a matrix can only contain one kind of data, usaually numeric.
 
 10. Create a function with an if/else statement. Your function should determine whether a test score is a passing grade of 50 or above (TRUE or FALSE). You will need to choose either the `if` and `else` statements or the `ifelse` statement. Hint: Use `print`, not `return`. The name of your function should be informative.
 
@@ -67,4 +96,4 @@ This exercise accompanies the lessons in Environmental Data Analytics on coding 
 
 12. QUESTION: Which option of `if` and `else` vs. `ifelse` worked? Why?
 
-> Answer: 
+> Answer: ifelse works because you can put multiple arguments into it at one time. If and else you can only put one argument in at a time.
