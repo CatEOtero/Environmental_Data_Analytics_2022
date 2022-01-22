@@ -114,4 +114,4 @@ Helpful links: https://www.datacamp.com/community/tutorials/if-else-function-r
 
 12. QUESTION: Which option of `if` and `else` vs. `ifelse` worked? Why?
 
-> Answer: ifelse works because it checks the whole vector and returns outputs for each row of data in the vector whilt if and else only outputed one answer.
+> Answer: ifelse works because it checks the whole vector and returns outputs for each row of data in the vector while if and else only outputs one answer.
