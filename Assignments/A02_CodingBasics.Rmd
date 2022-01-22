@@ -70,16 +70,13 @@ passing_score <- c(TRUE, TRUE, TRUE, TRUE)
 
 #7. Create data frame from vectors
 exam_results.df<- data.frame(student_names, test_scores, 
-                      passing_score)
-exam_results.df
+                      passing_score); exam_results.df
 
 #8. renaming columns in data frame. Helpful link https://www.geeksforgeeks.org/change-column-name-of-a-given-dataframe-in-r/
 exam_results.df <-data.frame(student_names, test_scores, 
                       passing_score)
 
-colnames(exam_results.df) <- c('Student Names','Test Scores','Passing Score?')
-
-exam_results.df
+colnames(exam_results.df) <- c('Student Names','Test Scores','Passing Score?'); exam_results.df
 ```
 
 9. QUESTION: How is this data frame different from a matrix?
@@ -92,8 +89,29 @@ exam_results.df
 
 ```{r}
 
+#checking if students passed with if and else function
+check_passing <- function(x) {
+  if(x >= 50) {
+    x = TRUE
+  }
+  else if (x < 50) {
+    x = FALSE
+  }
+}
+
+check_students_passed <- check_passing('passing_score'); check_students_passed
+
+#checking if students passed with ifelse function
+
+check_passing2 <- function(x){
+  ifelse(passing_score, x>=50, x<50)
+}
+
+check_students_passed2 <- check_passing2('passing_score'); check_students_passed2
+
 ```
+Helpful links: https://www.datacamp.com/community/tutorials/if-else-function-r
 
 12. QUESTION: Which option of `if` and `else` vs. `ifelse` worked? Why?
 
-> Answer: ifelse works because you can put multiple arguments into it at one time. If and else you can only put one argument in at a time.
+> Answer: ifelse works because it checks the whole vector and returns outputs for each row of data in the vector whilt if and else only outputed one answer.
