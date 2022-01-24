@@ -103,7 +103,11 @@ Commons functions to import datasets and store as data frames are *read.table()*
 #read.csv("/Users/lmm89/OneDrive/Duke_University/7_Spring2021/ENV872_EDA/GitRepo_EDA_S2021/Environmental_Data_Analytics_2021/Data/Raw/USGS_Site02085000_Flow_Raw.csv")
 
 # Relative file path (friendly for users regardless of machine. As long as the people have the same KEY folder with all the subfolders i.e. E_D_A_2022 then a relative path should work for everyone); set working directory then you can read data in from a relative path. just start from where the data deviates or goes deeper than the working directory
-USGS.flow.data <- read.csv("../Data/Raw/USGS_Site02085000_Flow_Raw.csv")  
+USGS.flow.data <- read.csv("../Data/Raw/USGS_Site02085000_Flow_Raw.csv")
+
+USGS.flow.data <- read.csv("../Data/Raw/USGS_Site02085000_Flow_Raw.csv", stringsAsFactors = TRUE)
+#you now need to add stringAsFactors = TRUE as an argument to the end of your dataset import so that characters read in as factors b/c this is no longer a default
+
 #type the first dot and front slash and then R will give you options then you can use tab to find other folders that are deeper
 #For knitting the .Rmd file you need to add an extra "." to the relative path before the first front slash
 # R Markdown documents are compiled in separate R sessions to enhance reproducibility, so you current R console has nothing to do with the compilation of the R Markdown documents.
