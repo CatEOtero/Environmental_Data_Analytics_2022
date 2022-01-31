@@ -1,6 +1,6 @@
 ---
 title: "Assignment 3: Data Exploration"
-author: "Student Name, Section #0"
+author: "Catherine Otero, Section #1"
 output: pdf_document
 geometry: margin=2.54cm
 ---
@@ -14,15 +14,21 @@ This exercise accompanies the lessons in Environmental Data Analytics on Data Ex
 2. Work through the steps, **creating code and output** that fulfill each instruction.
 3. Be sure to **answer the questions** in this assignment document.
 4. When you have completed the assignment, **Knit** the text and code into a single PDF file.
-5. After Knitting, submit the completed exercise (PDF file) to the dropbox in Sakai. Add your last name into the file name (e.g., "FirstLast_A03_DataExploration.Rmd") prior to submission.
+5. After Knitting, submit the completed exercise (PDF file) to the assignments tab in Sakai. Add your last name into the file name (e.g., "FirstLast_A03_DataExploration.Rmd") prior to submission.
 
-The completed exercise is due on <>.
-
+The completed exercise is due on <Jan 31, 2022 at 7pm>.
 
 ## Set up your R session
 
 1. Check your working directory, load necessary packages (tidyverse), and upload two datasets: the ECOTOX neonicotinoid dataset (ECOTOX_Neonicotinoids_Insects_raw.csv) and the Niwot Ridge NEON dataset for litter and woody debris (NEON_NIWO_Litter_massdata_2018-08_raw.csv). Name these datasets "Neonics" and "Litter", respectively. **Be sure to add the `stringsAsFactors = TRUE` parameter to the function when reading in the CSV files.**
 ```{r,  message = FALSE}
+getwd()
+
+library(tidyverse)
+
+Neonics <- read.csv("../Data/Raw/ECOTOX_Neonicotinoids_Insects_raw.csv", stringsAsFactors = TRUE)
+
+Litter <- read.csv("../Data/Raw/NEON_NIWO_Litter_massdata_2018-08_raw.csv", stringsAsFactors = TRUE)
 
 ```
 
@@ -30,19 +36,18 @@ The completed exercise is due on <>.
 
 2. The neonicotinoid dataset was collected from the Environmental Protection Agency's ECOTOX Knowledgebase, a database for ecotoxicology research. Neonicotinoids are a class of insecticides used widely in agriculture. The dataset that has been pulled includes all studies published on insects. Why might we be interested in the ecotoxicologoy of neonicotinoids on insects? Feel free to do a brief internet search if you feel you need more background information. 
 
-> Answer: 
+> Answer: Insects can be indicator species that show effects of neonicotinoids earlier than the effect on humans may be seen. Also, insects are often an indicator of ecosystem health, so seeing how insects react to neonicotinoids may help protect enviornmental health.
 
 3. The Niwot Ridge litter and woody debris dataset was collected from the National Ecological Observatory Network, which collectively includes 81 aquatic and terrestrial sites across 20 ecoclimatic domains. 32 of these sites sample forest litter and woody debris, and we will focus on the Niwot Ridge long-term ecological research (LTER) station in Colorado. Why might we be interested in studying litter and woody debris that falls to the ground in forests? Feel free to do a brief internet search if you feel you need more background information. 
 
-> Answer: 
+> Answer: The amount of litter and woody debris can show primary productivity of a system and habitat availability of organisms. It can also help plan for controlled burns and fire management.
 
 4. How is litter and woody debris sampled as part of the NEON network? Read the NEON_Litterfall_UserGuide.pdf document to learn more. List three pieces of salient information about the sampling methods here: 
 
 > Answer: 
-*
-*
-*
-
+*Litter is collected in PVC traps that are 0.5m squared and elevated above the groudn by about 80cm..
+*Litter has a butt end diameter of less than 2 cm and is less than 50 cm long.
+*The timing of target sampling depends on the vegetation type. Deciduous tree areas are sampled 1 time every 2 weeks during senescence. Evergreen areas are sampled year-round 1 time every 1-2 months.
 
 
 ## Obtain basic summaries of your data (Neonics)
@@ -50,38 +55,45 @@ The completed exercise is due on <>.
 5. What are the dimensions of the dataset?
 
 ```{r}
-
+#4623 rows and 30 columns
+dim(Neonics)
 ```
 
 6. Using the `summary` function on the "Effect" column, determine the most common effects that are studied. Why might these effects specifically be of interest?
 ```{r}
+summary(Neonics$Effect)
 
 ```
 
-> Answer: 
+> Answer: Mortality (1493) and Population (1803) are the effects most studied. These effects are likely of interest to see the mortality effect of neonicotinoids on the total population.
 
 7. Using the `summary` function, determine the six most commonly studied species in the dataset (common name). What do these species have in common, and why might they be of interest over other insects? Feel free to do a brief internet search for more information if needed.
 
 ```{r}
 
+summary(Neonics$Species.Common.Name)
+
 ```
 
-> Answer: 
+> Answer: Honey Bee (667), Parasitic Wasp (285), Buff Tailed Bumblebee (183), Carniolan Honey Bee (152), Bumble Bee (140), Italian Honeybee (113) 
 
 8. Concentrations are always a numeric value. What is the class of Conc.1..Author. in the dataset, and why is it not numeric?
 
 ```{r}
-
+class(Neonics$Conc.1..Author.)
 ```
 
-> Answer:
-
+> Answer: Conc.1..Author is a factor because it has names in it.
 
 
 ## Explore your data graphically (Neonics)
 
 9. Using `geom_freqpoly`, generate a plot of the number of studies conducted by publication year. 
 ```{r}
+ggplot(Neonics) +
+  geom_freqpoly(aes(x = CAS., color = gage.height.mean.approval), bins = 50) +
+  scale_x_continuous(limits = c(0, 10)) +
+  theme(legend.position = "top")
 
 ```
 
