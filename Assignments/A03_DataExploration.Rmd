@@ -114,11 +114,12 @@ Interpret this graph. What are the most common test locations, and do they diffe
 
 ```{r}
 ggplot(Neonics, aes(x = Endpoint)) +
-  geom_bar()
+  geom_bar() +
+  theme(axis.text.x=element_text(size=5))
 
 ```
 
-> Answer: 
+> Answer: I coudn't figure out how to make my axis readable but the biggest bars are the most common endpoints, probably mortality-related.
 >
 
 ## Explore your data (Litter)
