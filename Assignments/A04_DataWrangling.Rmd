@@ -30,13 +30,13 @@ getwd()
 library(lubridate)
 library(tidyverse)
 
-ozone.2018 <- read.csv("./Data/Raw/EPAair_O3_NC2018.csv", stringsAsFactors = TRUE)
+ozone_2018 <- read.csv("./Data/Raw/EPAair_O3_NC2018_raw.csv", stringsAsFactors = TRUE)
 
-ozone_2019 <- read.csv("./Data/Raw/NTL-LTER_Lake_ChemistryPhysics_Raw.csv", stringsAsFactors = TRUE)
+ozone_2019 <- read.csv("./Data/Raw/EPAair_O3_NC2019_raw.csv", stringsAsFactors = TRUE)
 
-pm25_2018 <- read.csv("./Data/Raw/EPAair_PM25_NC2018.csv", stringsAsFactors = TRUE)
+pm25_2018 <- read.csv("./Data/Raw/EPAair_PM25_NC2018_raw.csv", stringsAsFactors = TRUE)
 
-pm25_2019 <- read.csv("./Data/Raw/NTL-LTER_Lake_ChemistryPhysics_Raw.csv", stringsAsFactors = TRUE)
+pm25_2019 <- read.csv("./Data/Raw/EPAair_PM25_NC2019_raw.csv", stringsAsFactors = TRUE)
 
 #2
 ```
@@ -51,47 +51,60 @@ pm25_2019 <- read.csv("./Data/Raw/NTL-LTER_Lake_ChemistryPhysics_Raw.csv", strin
 #3
 
 #ozone.2018
-class(NTL.phys.data$sampledate)
-# Format sampledate as date
-NTL.phys.data$sampledate <- as.Date(NTL.phys.data$sampledate, format = "%m/%d/%y")
-class()
+class(ozone_2018$Date)
+ozone_2018$Date <- as.Date(ozone_2018$Date, format = "%m/%d/%Y")
+class(ozone_2018$Date)
 
 #ozone_2019
+class(ozone_2019$Date)
+ozone_2019$Date <- as.Date(ozone_2019$Date, format = "%m/%d/%Y")
+class(ozone_2019$Date)
 
 #pm25_2018
+class(pm25_2018$Date)
+pm25_2018$Date <- as.Date(pm25_2018$Date, format = "%m/%d/%Y")
+class(pm25_2018$Date)
 
 #pm25_2019
+class(pm25_2019$Date)
+pm25_2019$Date <- as.Date(pm25_2019$Date, format = "%m/%d/%Y")
+class(pm25_2019$Date)
 
-#4
-#ozone.2018
-NTL.phys.data.temps <- select(NTL.phys.data, lakename, sampledate:temperature_C)
+#4 Select the following columns: Date, DAILY_AQI_VALUE, Site.Name, AQS_PARAMETER_DESC, COUNTY, SITE_LATITUDE, SITE_LONGITUDE
+
+#ozone_2018
+ozone_2018_select <- select(ozone_2018, Date, DAILY_AQI_VALUE, Site.Name, AQS_PARAMETER_DESC, COUNTY, SITE_LATITUDE, SITE_LONGITUDE)
 
 #ozone_2019
+ozone_2019_select <- select(ozone_2019, Date, DAILY_AQI_VALUE, Site.Name, AQS_PARAMETER_DESC, COUNTY, SITE_LATITUDE, SITE_LONGITUDE)
 
 #pm25_2018
+pm25_2018_select <- select(pm25_2018, Date, DAILY_AQI_VALUE, Site.Name, AQS_PARAMETER_DESC, COUNTY, SITE_LATITUDE, SITE_LONGITUDE)
 
 #pm25_2019
+pm25_2019_select <- select(pm25_2019, Date, DAILY_AQI_VALUE, Site.Name, AQS_PARAMETER_DESC, COUNTY, SITE_LATITUDE, SITE_LONGITUDE)
 
-#5
-#ozone.2018
-NTL.phys.data.PeterPaul1 <- mutate(NTL.phys.data.PeterPaul1, month = month(sampledate)) 
-
-#ozone_2019
+#5 For the PM2.5 datasets, fill all cells in AQS_PARAMETER_DESC with "PM2.5" (all cells in this column should be identical)
 
 #pm25_2018
-
+pm25_2018_select$AQS_PARAMETER_DESC <- "PM2.5"
 #pm25_2019
+pm25_2019_select$AQS_PARAMETER_DESC <- "PM2.5"
 
 #6
 
 #ozone.2018
-write.csv(NTL.phys.data.PeterPaul1, row.names = FALSE, file = "./Data/Processed/NTL-LTER_Lake_ChemistryPhysics_PeterPaul_Processed.csv")
+write.csv(ozone_2018_select, row.names = FALSE, file = "./Data/Processed/EPAair_O3_NC2018_processed.csv")
 
 #ozone_2019
+write.csv(ozone_2019_select, row.names = FALSE, file = "./Data/Processed/EPAair_O3_NC2019_processed.csv")
 
 #pm25_2018
+write.csv(pm25_2018_select, row.names = FALSE, file = "./Data/Processed/EPAair_PM25_NC2018_processed.csv")
 
 #pm25_2019
+write.csv(pm25_2019_select, row.names = FALSE, file = "./Data/Processed/EPAair_PM25_NC2019_processed.csv")
+
 
 ```
 
@@ -111,23 +124,24 @@ write.csv(NTL.phys.data.PeterPaul1, row.names = FALSE, file = "./Data/Processed/
 
 ```{r}
 #7 Make sure column names are identical
-Litter.2019 <- rbind(Litter.June2016, Litter.July2016, Litter.August2016)
+combined_ozone_pm25 <- rbind(ozone_2018_select, ozone_2019_select, pm25_2018_select, pm25_2019_select)
 
 #8
+combined_ozone_pm25_filtered <- combined_ozone_pm25 %>% 
+  filter(Site.Name %in% c("Linville Falls", "Durham Armory", "Leggett", "Hattie Avenue", "Clemmons Middle", "Mendenhall School", "Frying Pan Mountain", "West Johnston Co.", "Garinger High School", "Castle Hayne", "Pitt Agri. Center", "Bryson City", "Millbrook School")) %>% 
+  group_by(Date, Site.Name, AQS_PARAMETER_DESC, COUNTY) %>% 
+  summarise(AQI_Mean = mean(DAILY_AQI_VALUE), Latitude = mean(SITE_LATITUDE), Longitude = mean(SITE_LONGITUDE), .groups = "drop") %>% mutate(Month = month(Date), Year = year(Date))
+  
 
-#9
+#9 Spread your datasets such that AQI values for ozone and PM2.5 are in separate columns. Each location on a specific date should now occupy only one row.
 # Spread nutrient data into separate columns using pivot_wider
-NTL.nutrient.data.PeterPaul.spread2 <- pivot_wider(NTL.nutrient.data.PeterPaul.gathered, names_from = nutrient, values_from = concentration)
-
-# Split components of cells into multiple columns
-# Opposite of 'separate' is 'unite'
-NTL.nutrient.data.PeterPaul.dates <- separate(NTL.nutrient.data.PeterPaul.subset, sampledate, c("Y", "m", "d"))
+combined_ozone_pm25_filtered_wider <- pivot_wider(combined_ozone_pm25_filtered, names_from = AQS_PARAMETER_DESC, values_from = AQI_Mean)
 
 #10
-dim()
+dim(combined_ozone_pm25_filtered_wider)
 
 #11
-write.csv(NTL.phys.data.PeterPaul1, row.names = FALSE, file = "./Data/Processed/EPAair_O3_PM25_NC2122_Processed.csv")
+write.csv(combined_ozone_pm25_filtered_wider, row.names = FALSE, file = "./Data/Processed/EPAair_O3_PM25_NC2122_Processed.csv")
 
 ```
 
@@ -139,23 +153,20 @@ write.csv(NTL.phys.data.PeterPaul1, row.names = FALSE, file = "./Data/Processed/
 
 13. Call up the dimensions of the summary dataset.
 
-
-```{r}
 #12(a,b)
-NTL.PeterPaul.summaries <- 
-  NTL.phys.nutrient.data.PeterPaul %>%
-  filter(depth == 0) %>%
-  group_by(lakename, month) %>%
-  filter(!is.na(temperature_C) & !is.na(tn_ug) & !is.na(tp_ug)) %>%
-  summarise(meantemp = mean(temperature_C), 
-            sdtemp = sd(temperature_C), 
-            meanTN = mean(tn_ug), 
-            sdTN = sd(tn_ug), 
-            meanTP = mean(tp_ug), 
-            sdTP = sd(tp_ug))
+EPAair.summaries <- 
+  combined_ozone_pm25_filtered_wider %>%
+  group_by(Site.Name, Month, Year) %>%
+  filter(!is.na(AQI_Mean)) %>%
+  summarise(meanozoneAQI = mean(Ozone),
+            meanpm25AQI = mean(PM2.5)
+            )
+
+#12(a,b)
+#EPAair.summaries <- combined_ozone_pm25_filtered_wider %>% group_by(Site.Name, Month, Year) %>% filter(!is.na(AQI_Mean)) %>% summarise(meanozoneAQI = mean(Ozone), meanpm25AQI = mean(PM2.5)
+            )
 
 
 #13
-dim()
+#dim(EPAair.summaries)
 
-```

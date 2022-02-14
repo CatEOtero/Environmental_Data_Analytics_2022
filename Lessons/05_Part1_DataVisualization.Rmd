@@ -12,6 +12,7 @@ editor_options:
 1. Perform simple data visualizations in the R package `ggplot`
 2. Develop skills to adjust aesthetics and layers in graphs
 3. Apply a decision tree framework for appropriate graphing methods
+use the decision tree on data-to-viz.com to decide
 
 ## Opening discussion
 Effective data visualization depends on purposeful choices about graph types. The ideal graph type depends on the type of data and the message the visualizer desires to communicate. The best visualizations are clear and simple. A good resource for data visualization is [Data to Viz](https://www.data-to-viz.com/), which includes both a decision tree for visualization types and explanation pages for each type of data, including links to R resources to create them. Take a few minutes to explore this website.
@@ -65,7 +66,7 @@ Here are some commonly used layers for plotting in ggplot:
 * geom_abline (plus geom_hline and geom_vline)
 * geom_text
 
-### Aesthetics
+### Aesthetics, if plotting one variable can plot aes at top in general ggplot code section, if plotting many variables than define aes for each y-variable
 Here are some commonly used aesthetic types that can be manipulated in ggplot: 
 
 * color
@@ -77,7 +78,7 @@ Here are some commonly used aesthetic types that can be manipulated in ggplot:
 ### Plotting continuous variables over time: Scatterplot and Line Plot
 
 ```{r, fig.height = 3, fig.width = 4, warning = FALSE}
-# Scatterplot
+# Scatterplot, dataframe is always in the first ggplot call line. has to be a dataframe, not vector or times series. 
 ggplot(EPAair, aes(x = Date, y = Ozone)) + 
   geom_point()
 
@@ -106,6 +107,7 @@ PMplot.faceted <-
 print(PMplot.faceted)
 
 # Filter dataset within plot building and facet by multiple variables
+#Luana's preference is always to filter before getting into plot but if it's a little thing than you can filter in it
 PMplot.faceted2 <- 
   ggplot(subset(EPAair, Site.Name == "Clemmons Middle" | Site.Name == "Leggett" |
                   Site.Name == "Bryson City"), 
@@ -178,7 +180,7 @@ Nutrientplot4 <-
                stackdir = "center", position = "dodge", dotsize = 2) #
 print(Nutrientplot4)
 
-# Violin plot
+# Violin plot, shows distribution of data
 Nutrientplot5 <-
   ggplot(PeterPaul.chem.nutrients.gathered, aes(x = lakename, y = concentration)) +
   geom_violin(aes(color = nutrient)) #

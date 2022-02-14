@@ -137,11 +137,16 @@ NTL.phys.data.mean %>%
 For gather we will use `pivot_longer` and for spread we will use `pivot_wider`.
 
 ```{r}
-#Exercise 5: gather irradiance data (measured in the water column and measured on the deck of the sampling boat) into one column using pivot_longer
+#Exercise 5: gather irradiance data (measured in the water column and measured on the deck of the sampling boat) into one column using pivot_longer. Could have 3,4,5etc coulmns into two columns
 
+#The irradianceWater and irradianceDeck are the columns you are combining
 
+NTL.phys.data.gathered <- 
+  pivot_longer(NTL.phys.data, irradianceWater:irradianceDeck, names_to = "irradiance", values_to = "radiation")
 
-#Exercise 6: spread temperatureC into more than one column based on the depth
+#Exercise 6: spread temperature_C into more than one column based on the depth
+
+NTL.phys.data.spread <- pivot_wider(NTL.phys.data, names_from = "depth", values_from = "temperature_C")
 
 ```
 
