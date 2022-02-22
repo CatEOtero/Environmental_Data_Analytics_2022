@@ -19,7 +19,11 @@ editor_options:
 The expression function can be used when you want to add mathematical symbols and subscripts mixed with regular letter to labels. 
 
 ```{r}
+<<<<<<< HEAD
 #below shows how to get the greek letter mu, and a comma and the R squared
+=======
+library(ggplot2)
+>>>>>>> 72ec65b1e12c2534c82aa2ec6af3c9b999b7ca57
 Plot_text <-
   #starts the grid at 0,0
 ggplot(data=data.frame(x=0,y=0))+

@@ -66,7 +66,7 @@ Are Ozone levels below the threshold for "good" AQI index (0-50)?
 
 > Exercise 1: State the hypotheses for testing mean of AQI index.
 
-> Answer: 
+> Answer: Null is ozone levels below threshold and alternate is levels re above.
 
 
 ```{r}
@@ -75,12 +75,16 @@ Are Ozone levels below the threshold for "good" AQI index (0-50)?
 summary(EPAair$Ozone)
 EPAair.subsample <- sample_n(EPAair, 5000)
 
-# Evaluate assumption of normal distribution
+# Evaluate assumption of normal distribution, shapiro test tells us not normal
 shapiro.test((EPAair.subsample$Ozone))
 ggplot(EPAair, aes(x = Ozone)) +
   geom_histogram() 
+
+#can see some points way off the line probs why shapiro said not normal
 qqnorm(EPAair$Ozone); qqline(EPAair$Ozone)
 
+#did the opposite than what we listed above. null is above here
+#significant so show mu is below the threshold so air is good!
 O3.onesample <- t.test(EPAair$Ozone, mu = 50, alternative = "less")
 O3.onesample
 
@@ -94,11 +98,13 @@ print(Ozone.plot)
 
 Write a sentence or two about the results of this test. Include both the results of the test and an interpretation that puts the findings in context of the research question.
 
-> 
+> use hypothesis test to support a claim about a sample.
 
 ### Two-sample t-test
 
 The two-sample *t* test is used to test the hypothesis that the mean of two samples is equivalent. Unlike the one-sample tests, a two-sample test requires a second assumption that the variance of the two groups is equivalent. Are Ozone levels different between 2018 and 2019?
+
+Similar to analysis of variance (ANOVA)
 
 ```{r}
 shapiro.test(EPAair$Ozone[EPAair$Year == 2018])
@@ -111,19 +117,23 @@ var.test(EPAair$Ozone ~ EPAair$Year)
 
 #p-value less than 0.05 then reject null for 2018 and 2019 i.e. true ratio not equal to one
 
-ggplot(EPAair, aes(x = Ozone, color = as.factor(Year))) +
-  geom_freqpoly()
-
-# Format as a t-test
+# Format as a t-test, categorical variable with two levels (2018 and 2019)
+#reject null b/c p-value below 0.05, means are not the same
 O3.twosample <- t.test(EPAair$Ozone ~ EPAair$Year)
 O3.twosample
 O3.twosample$p.value
 
 # Format as a GLM
+#get same p-value as with t-test
 O3.twosample2 <- lm(EPAair$Ozone ~ EPAair$Year)
 summary(O3.twosample2)
 
+#can see very separate 
 plot(O3.twosample2)
+
+#can see very close except for second peak
+ggplot(EPAair, aes(x = Ozone, color = as.factor(Year))) +
+  geom_freqpoly()
 
 
 ```
@@ -152,6 +162,25 @@ Create three plots, each with appropriately formatted axes and legends. Choose a
 ```{r}
 #Exercise 2:
 
+#1_density
+#fill instead of color b/c want whole thing filled with color not jus tthe outline, also want to be able to use tranparency
+#have the legend fill = "" blnak in the quotes so the legen doesn't have a title
+#as.factor changes year from integer to character, so you can plot it as a categorical variable. only changes it to a character for the ggplot not in the dataset
+
+ozone_year_density <- ggplot(EPAair, aes(x = Ozone, fill = as.factor(Year))) +
+  geom_density(aes(color = "gray", alpha = 50))
+
+#2_boxplot
+
+boxplot <- ggplot()
+
+stat_summary(geom)
+
+#the stat_summary function geom means you want text, fun.y means you want the label at the max y value. fun.y needs to be a predetermined function in R either preprogrammed or made by you above this code block, label is where you write what label you want 
+#vjust means vertical adjustment
+
+#3_violin
+
 
 ```
 
@@ -164,11 +193,20 @@ For the NTL-LTER dataset, can we predict PM2.5 from Ozone?
 ```{r}
 
 #Exercise 3: Run a linear regression PM2.5 by Ozone. Find the p-value and R-squared value. 
+Pm2.5byOzone.regression <- lm(EPAair$PM2.5 ~ EPAair$Ozone)
 
+#could also do
 
+#just printing it only returns the coefficients
+Pm2.5byOzone.regression
+
+#summary returns more details including p-value, r-squared is very low indicating other things than ozone influencing PM2.5
+summary(Pm2.5byOzone.regression)
 
 #Exercise 4: Build a scatterplot. Add a line and standard error for the linear regression. 
-
+scatter.regression <- ggplot(Pm2.5byOzone.regression, aes(x = Ozone, y = PM2.5)) +
+  geom_point()
+print(scatter.regression)
 
 
 ```

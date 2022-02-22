@@ -1,6 +1,6 @@
 ---
 title: "Assignment 5: Data Visualization"
-author: "Student Name"
+author: "Catherine Otero"
 output: pdf_document
 geometry: margin=2.54cm
 editor_options: 
@@ -33,8 +33,30 @@ the processed data file for the Niwot Ridge litter dataset (use the [`NEON_NIWO_
 
 ```{r}
 #1 
+getwd()
+
+library(tidyverse)
+library(cowplot)
+library(rlang)
+library(lubridate)
+
+peterpaul <- read.csv("../Data/Processed/NTL-LTER_Lake_Chemistry_Nutrients_PeterPaul_Processed.csv", stringsAsFactors = TRUE)
+
+PeterPaul.chem.nutrients <- read.csv("./Data/Processed/NTL-LTER_Lake_Chemistry_Nutrients_PeterPaul_Processed.csv", stringsAsFactors = TRUE)
+
+processed_litter <- read.csv("../Data/Processed/NEON_NIWO_Litter_mass_trap_Processed.csv", stringsAsFactors = TRUE)
 
 #2 
+class(peterpaul$sampledate)
+peterpaul$sampledate <- as.Date(peterpaul$sampledate, format = "%Y/%m/%d")
+class(peterpaul$sampledate)
+
+PeterPaul.chem.nutrients$sampledate <- as.Date(PeterPaul.chem.nutrients$sampledate, format = "%Y-%m-%d")
+
+class(processed_litter$collectDate)
+processed_litter$collectDate <- ymd(processed_litter$collectDate)
+ #as.Date(processed_litter$collectDate, format = "%Y/%m/%d")
+class(processed_litter$collectDate)
 
 ```
 ## Define your theme
@@ -42,6 +64,8 @@ the processed data file for the Niwot Ridge litter dataset (use the [`NEON_NIWO_
 
 ```{r}
 #3
+
+theme_set(theme_classic())
 
 ```
 
@@ -52,32 +76,97 @@ For numbers 4-7, create ggplot graphs and adjust aesthetics to follow best pract
 
 ```{r}
 #4
+phosphorusvsphosphate <- 
+  ggplot(peterpaul, aes(x = po4, y = tp_ug)) +
+  geom_point(aes(colour = lakename)) +
+  geom_smooth(method = lm, se=FALSE) +
+  xlim(0, 50) +
+  labs(x = "Phosphate", y = "Total Phosphorus")
+  
+
+print(phosphorusvsphosphate)
 
 ```
-
 
 5. [NTL-LTER] Make three separate boxplots of (a) temperature, (b) TP, and (c) TN, with month as the x axis and lake as a color aesthetic. Then, create a cowplot that combines the three graphs. Make sure that only one legend is present and that graph axes are aligned.
 
 ```{r}
-#5
+#5 
+temp <- ggplot(PeterPaul.chem.nutrients) +
+  geom_boxplot(aes(x = as.factor(month), y = temperature_C, color = lakename), show.legend = FALSE) +
+  labs(x = NULL, y = "Temperature")
+print(temp)
+
+tp <- ggplot(PeterPaul.chem.nutrients) +
+  geom_boxplot(aes(x = as.factor(month), y = tp_ug, color = lakename), show.legend = FALSE) +
+  labs(x = NULL, y = "TP")
+print(tp)
+
+tn <- ggplot(PeterPaul.chem.nutrients) +
+  geom_boxplot(aes(x = as.factor(month), y = tn_ug, color = lakename)) +
+  labs(x = "Month", y = "TN")
+print(tn)
+
+Legend <- get_legend(tn+theme(legend.position = "bottom"))
+
+CombinedPlot <- 
+  plot_grid(temp, tp, tn + theme(legend.position = "none"),
+            ncol = 1)
+CombinedPlot
+
+CombinedPlotwithLegend <- plot_grid(CombinedPlot, Legend, nrow = 2, rel_heights = c(3, 0.3))
+
+
+CombinedPlotwithLegend
+
+#Can't figure out why my legend isn't showing up
+
+#to get the degree symbol
+#ylab(expression(paste("Temperature, ", degree, "C")))
 
 ```
 
 Question: What do you observe about the variables of interest over seasons and between lakes? 
 
-> Answer: 
+> Answer: Mean temperatures fluctuate as one might expect in the northern hemisphere with hotter summer months in both lakes. TP and TN do not fluctuate as much as temperature across both lakes. Peter Lake's mean values for TP and TN are consistently slightly above Paul Lake's mean values.
 
 6. [Niwot Ridge] Plot a subset of the litter dataset by displaying only the "Needles" functional group. Plot the dry mass of needle litter by date and separate by NLCD class with a color aesthetic. (no need to adjust the name of each land use)
 
 7. [Niwot Ridge] Now, plot the same plot but with NLCD classes separated into three facets rather than separated by color. 
 
 ```{r}
-#6
+#Number 6 and 7 are commented out because 
+#I keep getting this error message: 
+#Error in seq.int(0, to0 - from, by) : 'to' must be a finite number. 
+#I had to comment the lines out to knit my file.
+#6 
+#class(processed_litter$collectDate)
+# 
+needles <-
+  ggplot(subset(processed_litter, functionalGroup == "Needles"),
+  aes(x = collectDate, y = dryMass, color = nlcdClass)) +
+  geom_point()
 
-#7
+print(needles)
 
+#I keep receiving this Error: 
+#Error in seq.int(0, to0 - from, by) : 'to' must be a finite number
 
+#7 Getting same error as number 6
+# Separate plot with facets
+needles.faceted <-
+ggplot(subset(processed_litter, functionalGroup == "Needles"),
+ aes(x = collectDate, y = dryMass)) +
+  geom_point() +
+  facet_wrap(vars(nlcdClass), nrow = 3) +
+  ylab("Mass (g)") #check units
+print(needles.faceted)
+
+theme(plot.title = element_text("Title", hjust = .5, vjust = -.5))
+lab(title = "title")
+ggarrange(plot names, labels = c("a", "b", "c"))
+#c() put multiple strings together
 ```
 Question: Which of these plots (6 vs. 7) do you think is more effective, and why? 
 
-> Answer:
+> Answer: I'd say number 6 because I like how graphs look when variables are separated by color and it gives and clear visual cue of differences.
