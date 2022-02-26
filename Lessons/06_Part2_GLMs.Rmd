@@ -32,7 +32,7 @@ theme_set(mytheme)
 ```
 
 ### One-way ANOVA
-A one-way ANOVA is used when you have one categorical explanatory variable with more than two categories. In R, we can run the model with the function `lm` or `aov`, the latter of which will allow us to run post-hoc tests to determine pairwise differences.
+A one-way ANOVA is used when you have one categorical explanatory variable with more than two categories. In R, we can run the model with the function `lm` or `aov`, the latter of which will allow us to run post-hoc tests to determine pairwise differences. If you reject the null it means at least one pair of means is not equal.
 
 Does total litter biomass differ among sites at the Niwot Ridge LTER?
 ```{r}
@@ -45,10 +45,11 @@ summary(Litter.Totals)
 #check all value of plotID
 summary(Litter.Totals$plotID)
 
-# Test for normality. 
+# Test for normality. to see if meets ANOVA assumptions
 # Note: the important assumption for GLMs is normality of residuals, 
 # not necessarily normality of raw data. See below when we plot the model.
 # shapiro.test() performs the Shapiro-Wilk test of the null that data follows a normal distribution
+# filter the data within the function so the function runs once for each unique value within a column for plotID (x variable) against the drymass which is your y variable, so only plotID changes in each of these lines
 
 shapiro.test(Litter.Totals$dryMass[Litter.Totals$plotID == "NIWO_040"])
 shapiro.test(Litter.Totals$dryMass[Litter.Totals$plotID == "NIWO_041"])
@@ -64,9 +65,11 @@ shapiro.test(Litter.Totals$dryMass[Litter.Totals$plotID == "NIWO_064"])
 shapiro.test(Litter.Totals$dryMass[Litter.Totals$plotID == "NIWO_067"])
 
 #results: reject null in all except two: NIWO_057 and NIWO_046
+#can use Q-Q- plot to see if the data is normally distributed
 qqnorm(Litter.Totals$dryMass); qqline(Litter.Totals$dryMass)
 
-# Test for equal variance
+# Test for equal variance. testing another assumption.
+#Reminder: just because doesn't meet all assumptions doesn't mean we can't run the ANOVA just must acknowledge
 # ANOVA is robust against departures from equal variance.
 # bartlett.test() performs Bartlett's test of the null that the variances in each of the groups (samples) are the same.
 bartlett.test(Litter.Totals$dryMass ~ Litter.Totals$plotID)
@@ -74,12 +77,20 @@ bartlett.test(Litter.Totals$dryMass ~ Litter.Totals$plotID)
 #results: reject null i.e. variances are not equal
 
 # Format ANOVA as aov
+# similar to running lm, specify dataset then specify your continuous dependent variable and then your categorical independent
 Litter.Totals.anova <- aov(data = Litter.Totals, dryMass ~ plotID)
 summary(Litter.Totals.anova)
 
-#results: reject null hypothesis i.e. difference between a pair of group means is statiscally significant
+#the results: df = degrees of freedom and is number of levels of independent variable minus 1. so we had 12 lakes so df =11. sum of squares is the sum of how far all the points are from the actual mean. mean square is sum of squares dived by df. F value=mean square of idependent variable divided by mean sq of residuals and from f value we get our p value. 
+
+#results of anova don't tell us which means are different so have to run post-hoc tests to figure this out. seems silly they aren't all inlcuded in one test.
+
+#results: reject null hypothesis i.e. difference between a pair of group means is statistically significant
 
 # Format ANOVA as lm
+# output from the lm summary is more detailed, more classsic lm output
+#that's the main difference
+# missing value is represented by the intercept
 Litter.Totals.anova2 <- lm(data = Litter.Totals, dryMass ~ plotID)
 summary(Litter.Totals.anova2)
 
@@ -88,10 +99,14 @@ summary(Litter.Totals.anova2)
 plot(Litter.Totals.anova2)
 
 # Post-hoc test
+# shows which of the means are different from each other
+# 
 # TukeyHSD() computes Tukey Honest Significant Differences
 TukeyHSD(Litter.Totals.anova)
 
-# Extract groupings for pairwise relationships
+#Outputs: diff is difference btw the means, then upper and lower confidence intervals, and p-value. Can scroll trhough and see which p-values below 0.05 aka reject null of means are the same. time-consuming if big dataset. 
+
+# Extract groupings for pairwise relationships, can extract groupings with same means, group =  TRUE indicates want same mean pairs as output
 Litter.Totals.groups <- HSD.test(Litter.Totals.anova, "plotID", group = TRUE)
 Litter.Totals.groups
 
