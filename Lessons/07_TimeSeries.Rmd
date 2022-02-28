@@ -53,6 +53,10 @@ wind_data$DATE <- ym(wind_data$DATE)
 
 Time series are a special class of dataset, where a response variable is tracked over time. The frequency of measurement and the timespan of the dataset can vary widely. At its most simple, a time series model includes an explanatory time component and a response variable. Mixed models can include additional explanatory variables (check out the `nlme` and `lme4` R packages). We will cover a few simple applications of time series analysis in these lessons, with references for how to take analyses further.
 
+Correlation: how tied the variables are with 1 and -1 strong correlations and values close to 0 are weak. If positive then positive relationship and if not then inverse relationship. Autocorrelation: how your series is related to other observations of the same series. Calculate by creating new column with a lag of 1 from actual column then can lag by 2. info on self-correlation and time dependency. Partial autocorrelation: y and yt-2 there is some influence of yt-1 in the middle. gives relationship of the y and yt-2 when the influence of intermediates are eliminated. 
+
+de-trending: want to create an equation that will model the data i have. trend is one example. when model and want to think of future trends then want the trend to be in our future projections. some models can't handle trends so model then put trend back in. most models can handle the trend though.
+
 ### Opportunities
 
 Analysis of time series presents several opportunities. For environmental data, some of the most common questions we can answer with time series modeling are:
@@ -73,6 +77,8 @@ Time series datasets come with several caveats, which need to be addressed in or
 ## Handling data gaps and missing data. Example: Eno River Discharge
 
 River discharge is measured daily at the Eno River gage station. Since we are working with one location measured over time, this will make a great example dataset for time series analysis. 
+
+Need to clean the dataset within R before starting. 
 
 Let's look at what the dataset contains for mean daily discharge.
 
@@ -200,13 +206,14 @@ ggplot(wind_data_clean ) +
 Specific tests for monotonic trend analysis are listed below, with assumptions and tips: 
 
 * **linear regression**: no seasonality, fits the assumptions of a parametric test. Function: `lm`
-* **Mann-Kendall**: no seasonality, non-parametric, missing data allowed. Function: `MannKendall()` (package: Kendall)
+* **Mann-Kendall**: no seasonality, non-parametric, missing data allowed. Function: `MannKendall()` (package: Kendall). stationary test to see if the change is really ocurring. may make blind on trend if not account for season
 * **Seasonal Mann-Kendall**: seasonality, non-parametric `SeasonalMannKendall` (package: Kendall)
-* **Spearman Rho**: no seasonality, non-parametric, missing data allowed. Function: `cor.test(method="spearman")` (package: stats)
+* **Spearman Rho**: no seasonality, non-parametric, missing data allowed. Function: `cor.test(method="spearman")` (package: stats), correlation of time series overtime. see if increase or decrease. cannot handle seasonality
 
 Specific test for stochastic trend analysis:
 
-* **Augmented Dickey Fuller**: no seasonality, non-parametric, missing data not allowed. Function: `adf.test()` (package: tseries)
+* **Augmented Dickey Fuller**: no seasonality, non-parametric, missing data not allowed. Function: `adf.test()` (package: tseries), detect stochastic trend. stochastic trend is trend that's slope changes overtime
+determinisitic is trend that is constant over time
 
 
 #### Example: monotonic trend analysis
@@ -259,6 +266,8 @@ What would we conclude based on these findings?
 
 
 ## Forecasting with Autoregressive and Moving Average Models (ARMA)
+
+This section is a where to start on time series for forecasting beyond this lesson. 
 
 We might be interested in characterizing a time series in order to understand what happened in the past and to effectively forecast into the future. Two common models that can approximate time series are **autoregressive** and **moving average** models. To classify these models, we use the  **ACF (autocorrelation function)** and the **PACF (partial autocorrelation function)**, which correspond to the autocorrelation of a series and the correlation of the residuals, respectively. 
 

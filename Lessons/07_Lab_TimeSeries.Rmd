@@ -27,6 +27,7 @@ library(zoo)
 library(Kendall)
 #install.packages("tseries")
 library(tseries)
+library(cowplot)
 
 # Set theme
 mytheme <- theme_classic(base_size = 14) +
@@ -47,12 +48,17 @@ Rainfall_BR <- read.csv("./Data/Raw/pr_1901_2016_BRA.csv", stringsAsFactors = TR
 
 Temp_BR <- read.csv("./Data/Raw/tas_1901_2016_BRA.csv", stringsAsFactors = TRUE)
 
-#Exercise 2: Tidy the rainfall data sets.
+#Exercise 2: Tidy the rainfall data sets. ASK ABOUT IN OH
 #a Rename the column with Rainfall to get rid of the dots.
 #b Note that on both data sets that is a column with the month name and average. Convert it to a Month column by separating the string, i.e., month in one column and the word "Average" on another. Hint: use the separate() function in the pipe.
 #c Now you should have a column with Month. Use the paste0() function to paste month and year together and create a date object.
 #d Select only the columns of interest: Date and rainfall
 
+#separate function: split one column into multiple
+#seperate(columnname, c("newcolname", "newcolname", "newcolname")" ")
+#the nulls in this case is column names of our new columns and we won't use the null one
+#the space btw the last set of "" is telling R that a space seperates what we want to divide the columns to divide into i.e. "Jan Average" is divided by a space
+#paste0 pastes all the elements together
 Rainfall_BR_processed <-
   Rainfall_BR %>% 
   rename( Rainfall = Rainfall....MM.) %>% 
@@ -69,7 +75,7 @@ Temp_BR_processed <-
   select(Date,Temperature_C)  
 
 
-#Exercise 4: Join the temperature and rainfall into one tidy data frame with 3 columns: Date, Rainfall and Temperature.
+#Exercise 4: Join the temperature and rainfall into one tidy data frame with 3 columns: Date, Rainfall and Temperature. 10:55 during lesson - why ue the innerjoin
 BRA_complete <- inner_join(Rainfall_BR_processed,Temp_BR_processed)
   
            
@@ -81,23 +87,48 @@ BRA_complete <- inner_join(Rainfall_BR_processed,Temp_BR_processed)
 ```{r}
 
 #Exercise 5: Check if there is any missing data for both temperature and rainfall series.
-
-
+#HMMMM
+summary(BRA_complete$Rainfall)
 
 
 #Exercise 6: Plot both series over time on separate plots. Add a trend line using geom_smooth(). Can you say something about the trend just by visualizing the data?
 
+Temp <- ggplot(BRA_complete, aes(x = Date, y = Temperature_C)) +
+  geom_line() +
+  geom_smooth(method = "lm")
 
 
+Rain <- ggplot(BRA_complete, aes(x = Date, y = Rainfall)) +
+  geom_line() +
+  geom_smooth(method = "lm")
 
-
+combinedplot <- 
 
 ```
 
 ## Creating time series objects
 
 ```{r}
-#Exercise 7: Create a time series objects for each series using ts(). Make sure you specify the starting point and frequency.
+#Exercise 7: Create a time series objects for each series using ts(). Make sure you specify the starting point and frequency. Make sure you point out the column in the dataset that you want converted to a time series or else R will try to do all of the data. 
+f_month_rain <- month(first(Rainfall_BR_processed$Date))
+f_year_rain <- year(first(Rainfall_BR_processed$Date))
+rain_data_ts <- ts(Rainfall_BR_processed$Rainfall,
+                   start=c(f_year_rain, f_month_rain),
+                   frequency=12)
+
+
+f_month_temp <- month(first(Temp_BR_processed$Date))
+f_year_temp <- year(first(Temp_BR_processed$Date))
+temp_data_ts <- ts(Temp_BR_processed$Temperature_C,
+                   start=c(f_year_temp, f_month_temp),
+                   frequency=12)
+#freq is 12 b/c we are doing it by month
+#or
+#11:25
+#fmonth <- month(first(BRA_complete$Date))
+
+#fyear <- year(first(BRA_complete$Date))
+
 
 
 
@@ -105,6 +136,8 @@ BRA_complete <- inner_join(Rainfall_BR_processed,Temp_BR_processed)
 
 
 ## Decomposing a time series dataset
+
+You can see how much is due to each part
 
 A given time series can be made up of several component series: 
 
@@ -119,15 +152,17 @@ The `stl` function decomposes the time series object into its component parts. W
 ```{r}
 
 # Exercise 8: Use the stl() function to decompose both series. 
-# Visualize the decomposed series using plot(). What components can you identify?
+# Visualize the decomposed series using plot(). What components can you identify? stl shows seasonal trend and remainders. first windeow is original data, second is seasonal componnent, third is trend and fourth is remainder. if you some the bottom three you get your original data
 
+rain_data_decomp <- stl(rain_data_ts,s.window = "periodic")
+plot(rain_data_decomp)
 
-
-
+temp_data_decomp <- stl(temp_data_ts,s.window = "periodic")
+plot(temp_data_decomp)
 
 
 # Exercise 9: Use the times series object generated with the stl() to extract the 
-# components of each series and turn them into data frames.
+# components of each series and turn them into data frames. If having a hard time finding the time.series then look at the environment
 
 
 
